@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "comprodls-sdk": "^1.1.51",
+    "q": "^1.5.1",
     "superagent": "^4.1.0"
   },
   "devDependencies": {
