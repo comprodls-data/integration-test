@@ -8,7 +8,7 @@ var serviceAuthUrl = 'http://dls-cup-alpha-302611962.us-west-2.elb.amazonaws.com
 var accountid = 'cup1';
 var extuserid = 'cmpqa_' + Date.now();
 var spaceCode = 'INT-ORG-ONE';
-var event, comproDLS, pushX;
+var pushXEvent, comproDLS, pushX;
 
 describe('Space API Integration test', function () {
 
@@ -19,7 +19,7 @@ describe('Space API Integration test', function () {
 
   afterEach(function(done) {
     // Cleanup of the pushX
-    event = undefined;
+    pushXEvent = undefined;
     pushX.cleanup();
     done();
   });
@@ -38,7 +38,7 @@ describe('Space API Integration test', function () {
     var options = { accountId: accountid, refId: extuserid, authKey: 'my-custom-auth-key' }
 
     pushXGrantByAccountId(options)
-    .then(function(event) {
+    .then(function(pushXEvent) {
       /*
         At this point we have been authorized with PubNub and
         and ready to subscribe to specific channels that we're
@@ -55,7 +55,7 @@ describe('Space API Integration test', function () {
         i.e. API calls, etc. - only after a successful subscription.
 
       */
-      event.on({ channel: 'pushx_status' }, function(status) {
+     pushXEvent.on({ channel: 'pushx_status' }, function(status) {
 
         if(status.httpcode !== 200) { done('Error in pushx'); }
         else {
@@ -92,7 +92,7 @@ describe('Space API Integration test', function () {
 
         Channel scope: "ALL EVENTS FOR REFID" - extuserid
       */
-      event.on({ accountid: accountid, channel: 'refid.' + extuserid }, function(data) {
+     pushXEvent.on({ accountid: accountid, channel: 'refid.' + extuserid }, function(data) {
         /*
           At this point we have a system event for
           REFID = extuserid. We are expecting (waiting) for the event
@@ -129,8 +129,8 @@ function pushXGrantByOrgId() {
     return pushX.grantByUserOrgId({ authkey: 'my-custom-auth-key' })
   })
   .then(function(data) {
-    event = pushX.connect(data);
-    deferred.resolve(event);
+    pushXEvent = pushX.connect(data);
+    deferred.resolve(pushXEvent);
   })
   .catch(function(err) { deferred.reject(err); })
 
@@ -149,8 +149,8 @@ function pushXGrantByAccountId(options) {
     authKey: options.authKey
   })
   .then(function(data) {
-    event = pushX.connect(data);
-    deferred.resolve(event);
+    pushXEvent = pushX.connect(data);
+    deferred.resolve(pushXEvent);
   })
   .catch(function(err) { deferred.reject(err); })
 
