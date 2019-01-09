@@ -2,26 +2,26 @@
 
 var request = require('superagent');
 var assert = require('chai').assert;
-var serviceAuthUrl = 'http://dls-cup-alpha-302611962.us-west-2.elb.amazonaws.com/lb-auth';
-var accountid = 'cup1';
-var extuserid = 'cmpqa_' + Date.now();
-var spaceCode = 'INT-ORG-ONE';
+var statusPageUrl = 'https://api.statuspage.io/v1/';
+var page_id = 'tzx1szydvwcf';
+var component_id = '0a62712f-2a1a-4c66-970e-9f75e86ffe02';
+var api_key = 'c3cb0449-e3b7-4618-a938-bcae06256d82'
 
-describe('Space API Integration test', function () {
+describe('Status Page', function () {
   
   var reqBody = {
-    "ext_user_id": extuserid,
-    "ref_id": extuserid,
-    "ext_role": "teacher",
-    "space_code": spaceCode
-   };
+"component": {
+"status": "under_maintenance",
+"name": "Teacher Registration"
+}
   
-  it('Join Space using Space Code', function (done) {
+  it('Update Teacher Registration', function (done) {
       request
-        .post(serviceAuthUrl + '/accounts/' + accountid + '/join-institute-space')
+        .put(statusPageUrl + '/pages/' + page_id + '/components/'  + component_id)
         .send (reqBody)
         .set({'accept' : 'application/json'})
         .set({'content-type' : 'application/json'})
+        .set({'Authorization' : token})
         .end(function (err, res) {
           if (err) { done(err); }
           else {
